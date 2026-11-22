@@ -8,14 +8,14 @@ Windows 11 26H1 ve önceki sürümlerde `.NET Framework 3.5` kurulum hataları, 
 - [Revizyon 2: Deneysel .NET MSI çıkarma akışı](docs/revision-2-dotnet35-experimental.md)
 - [Secure Boot / Windows UEFI CA 2023](docs/secure-boot-windows-uefi-ca-2023.md)
 - [Revizyon 3: PCA2023 ISO ve Secure Boot doğrulaması](docs/revision-3-secure-boot-2023.md)
-- [Revizyon 5: Windows ADK/WinPE ve 2023 imzalı ISO kurulumu](docs/revision-5-adk-winpe-secure-boot-2023.md)
+- [Revizyon 5: ADK/WinPE ve 2023 imzalı ISO oluşturma](docs/revision-5-adk-winpe-secure-boot-2023.md)
+- [Revizyon 6: Ventoy ve SecureBootRecovery.efi ile ilgili kullanıcı senaryosu](docs/revision-6-ventoy-securebootrecovery.md)
 
 ## Önemli
 
-Bu depoda Microsoft'un desteği olmayan `.NET 3.5` MSI çıkarma ve `LaunchCondition` değiştirme yöntemi de kayıt altındadır; üretim veya ana bilgisayarda uygulanmamalıdır. Windows UEFI CA 2023 ISO işlemleri, Secure Boot DB ve firmware değişiklikleri cihazın önyükleme güvenini etkileyebilir.
+.NET MSI çıkarma/LaunchCondition değiştirme yöntemi Microsoft tarafından desteklenen kurulum yolu değildir. Secure Boot, UEFI DB ve firmware işlemleri önyükleme güvenini etkileyebilir; önce BitLocker anahtarınızı yedekleyin ve OEM/Microsoft yönergelerini izleyin.
 
-[Windows ADK resmi indirme sayfası](https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install)
-
-[Windows PE resmi indirme sayfası](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/download-winpe--windows-pe)
-
-[PCA2023 Secure Boot ve bootable media Microsoft rehberi](https://support.microsoft.com/en-us/servicing/os/windows/2025/02/updating-windows-bootable-media-to-use-the-pca2023-signed-boot-manager)
+- [Windows ADK resmi indirme sayfası](https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install)
+- [Windows PE resmi indirme sayfası](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/download-winpe--windows-pe)
+- [Ventoy resmi indirme sayfası](https://www.ventoy.net/en/download.html)
+- [Microsoft PCA2023 önyükleme medyası rehberi](https://support.microsoft.com/en-us/servicing/os/windows/2025/02/updating-windows-bootable-media-to-use-the-pca2023-signed-boot-manager)
