@@ -1,23 +1,14 @@
-# Windows 11 26H1 .NET Framework 3.5 ve Secure Boot Dokümantasyonu
+# Windows 11 26H1 .NET Framework 3.5 ve Secure Boot Notları
 
-Bu depo, Windows 11 26H1 üzerinde .NET Framework 3.5 kurulumu ve Secure Boot 2023 sertifika dönemlerini ele alan teknik notları, doğrulama komutlarını ve güvenli kurtarma yollarını toplar.
-
-> **Önemli:** Bu depodaki komutları çalıştırmadan önce Windows'un yedeğini alın ve yalnızca gerçek Microsoft kaynaklarından indirilmiş dosyaları kullanın.
+Windows 11 26H1'de .NET Framework 3.5 kurulumunun "başarılı/tamamlandı" demesine rağmen bileşenin sistemde görünmemesi ve dil paketi kurucusunun önce temel .NET 3.5'i istemesi için gözlem, doğrulama ve sorun giderme notları.
 
 ## İçindekiler
 
-- [Windows 11 26H1 .NET Framework 3.5](docs/dotnet-35-windows-11-26h1.md)
-- [Secure Boot ve Windows UEFI CA 2023](docs/secure-boot-windows-uefi-ca-2023.md)
-- [PowerShell betiği: Kurulum medyasını 2023 sertifikasıyla güncelleme](scripts/Make2023BootableMedia.ps1)
+- [.NET Framework 3.5: 26H1 kurulum ve dil paketi sorun giderme](docs/dotnet-35-windows-11-26h1.md)
+- [Secure Boot / Windows UEFI CA 2023](docs/secure-boot-windows-uefi-ca-2023.md)
 
-## Genel güvenlik uyarıları
+## Önemli
 
-- MSIX/MSI/EXE dosyalarını resmi kaynaktan indirin.
-- Microsoft tarafından imzalanmamış veya doğrulanmamış betikleri **Run as Administrator** yetkisiyle çalıştırmayın.
-- DiskPart ve EFI bölümü komutları veri kaybına yol açabilir.
-- Güvenli kurtarma prosedürü kullanmadan önce kişisel dosyaları dışarıya yedekleyin.
-- Windows'un desteklenen sürümüne göre güncel kurulumu tercih edin.
+.NET kurulum paketlerini düzenleyerek MSI `LaunchCondition` satırlarını kaldırmak, Microsoft'un desteklenen kurulum yolu değildir. Bu depoda söz konusu yöntemin başarıyla kurduğu veya Windows Update'in paketi tanıyacağı garanti edilmez. Belgede yöntem, yalnızca deneysel/son çare yaklaşımı olarak ve riskleriyle açıklanmıştır. Önce Microsoft'un sürüme özel resmi paketini kullanın.
 
-## Katkı
-
-Hatalı veya yanıltıcı bilgiler varsa konu açarak düzeltme önerisi gönderebilirsiniz.
+DiskPart, EFI veya Windows Installer değişiklikleri veri kaybına ve servis edilebilirlik sorunlarına yol açabilir. Önemli dosyalarınızı yedeklemeden yönetici yetkisiyle işlem yapmayın.
