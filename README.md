@@ -5,6 +5,7 @@ Windows 11 26H1'de .NET Framework 3.5 kurulumunun "başarılı/tamamlandı" deme
 ## İçindekiler
 
 - [.NET Framework 3.5: 26H1 kurulum ve dil paketi sorun giderme](docs/dotnet-35-windows-11-26h1.md)
+- [Revizyon 2: Kullanıcının MSI çıkarma akışı (deneysel)](docs/revision-2-dotnet35-experimental.md)
 - [Secure Boot / Windows UEFI CA 2023](docs/secure-boot-windows-uefi-ca-2023.md)
 
 ## Önemli
