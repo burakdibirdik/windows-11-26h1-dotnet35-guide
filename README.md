@@ -1,5 +1,10 @@
 # Windows 11 26H1 ve Önceki Sürümler için .NET 3.5 ve Secure Boot Notları
 
+[![Windows Insider](https://img.shields.io/badge/Windows_Insider-Program-blue?logo=windows&logoColor=white)](https://www.microsoft.com/windowsinsider/)
+[![Windows Internals](https://img.shields.io/badge/Windows-Internals-green?logo=windows&logoColor=white)](https://learn.microsoft.com/windows/)
+
+> Bu rozetler Shields.io üzerinden oluşturulan statik etiketlerdir; Microsoft hesabına bağlanmaz ve Insider başarılarını doğrulamaz. Gerçek Geri Bildirim Merkezi başarılarını göstermek için ekran görüntüsünü ayrıca bir görsel dosyası olarak depoya ekleyip README'de ona bağlamak gerekir.
+
 Windows 11 26H1 ve önceki sürümlerde `.NET Framework 3.5` kurulum hataları, dil paketi yükleme problemi ve Windows UEFI CA 2023 medyasıyla Secure Boot durumunu belgeleyen çalışma alanı.
 
 ## Belgeler
