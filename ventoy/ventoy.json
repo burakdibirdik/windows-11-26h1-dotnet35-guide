@@ -1,0 +1,12 @@
+{
+    "auto_install": [
+        {
+            "image": "/tr-tr_windows_11_consumer_editions_version_26h1_updated_march_2026_x64_dvd_d6bda57b.iso",
+            "template": "/ventoy/autounattend.xml"
+        },
+        {
+            "image": "/Win11-26h1_2023Signed.iso",
+            "template": "/ventoy/autounattend.xml"
+        }
+    ]
+}
