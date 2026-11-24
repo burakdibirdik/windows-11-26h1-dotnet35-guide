@@ -1,6 +1,8 @@
 # Windows 11 26H1 ve Önceki Sürümler için .NET 3.5, Secure Boot ve Kurtarma Notları
 
-Windows 11 26H1 ve önceki sürümlerde `.NET Framework 3.5` kurulum hataları, dil paketi sorunları, UEFI CA 2023/Secure Boot, Ventoy otomasyonu ve özel kurtarma BCD profillerini belgeleyen teknik çalışma alanı.
+Windows 11 26H1 ve önceki sürümler için `.NET Framework 3.5`, Secure Boot/UEFI CA 2023, BCD ve WinRE kurtarma profilleri, `bcdedit` kullanımı ve Ventoy otomasyonu hakkında Türkçe teknik notlar ve saha belgeleri.
+
+**Konular:** `windows-11` · `26h1` · `bcdedit` · `winre` · `ventoy` · `secure-boot`
 
 ## Belgeler
 
