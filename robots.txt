@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://burakdibirdik.github.io/windows-11-26h1-dotnet35-guide/sitemap.xml
