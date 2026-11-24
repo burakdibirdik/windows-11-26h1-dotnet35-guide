@@ -1,0 +1,124 @@
+# BCD Profilleri ve Kullanılan Komutlar — Teknik Dokümantasyon ve Saha Notları
+
+Bu belge, depoda paylaşılan **Eski Nesil Cihaz (Metin/F8)** ve **Yeni Nesil Cihaz (Metro/Grafiksel)** BCD dosyalarını, kullanılan `bcdedit`, `mountvol`, `reg`, `bcdboot` komutlarını ve gerçek donanım testlerinden elde edilen kesin saha bulgularını açıklar.
+
+> **Önemli Not:** BCD dosyaları ikili (*registry-hive* biçimli) dosyalardır; metin editörü ile doğrudan düzenlenmemelidir. Yapılan tüm değişiklikler `bcdedit /store <yol> /enum all /v` komutuyla doğrulanmalıdır.
+
+---
+
+## 1. Depodaki BCD Profilleri ve Teknik Yapıları
+
+### A. Eski Nesil Cihaz Profili (Metin Tabanlı / F8 Odaklı)
+Eski UEFI/BIOS cihazlar ve düşük çözünürlüklü ekranlarda kilitlenme olmadan hızlı önyükleme sağlamak için yapılandırılmıştır.
+
+* **Kurtarma Girdisi (`{default}`):**
+  * `device` ve `osdevice`: `ramdisk=[boot]\sources\boot.wim,{7619dcc8-fafe-11d9-b411-000476eba25f}` (WinPE/WinRE imajını RAM disk üzerinden başlatır).
+  * `path`: `\windows\system32\boot\winload.efi`
+  * `bootmenupolicy`: `3` (Kurtarma ve F8 alt menü davranışını tetikleyen özel politika değeri).
+  * `displaymessage`: `Recovery` (Hex karşılığı `0x250000c2 = 3`; önyükleme arayüzünü Kurtarma profiline geçirir).
+  * `custom:46000010`: `Yes` (`RecoveryOs = True` bayrağı).
+  * `flightsigning`: `Yes`, `isolatedcontext`: `Yes`, `nocrashautoreboot`: `Yes`, `winpe`: `Yes`, `detecthal`: `Yes`.
+* **Test Sonucu:** Kurtarma ortamı ("Windows 11 ile devam et" dahil) sorunsuz çalışmaktadır. F8 alt menüsünden doğrudan harici ISO üzerinden Güvenli Mod veya RAM Kurtarma çağrıldığında aygıt izolasyonu nedeniyle hata verebilir (detaylar Bölüm 3'te açıklanmıştır).
+
+### B. Yeni Nesil Cihazlar İçin Metro Profili (Grafiksel Menü)
+Yüksek çözünürlüklü (2K/4K) ekranlarda yazıların karınca gibi küçülmesini önlemek ve modern mavi önyükleme menüsünü sunmak için yapılandırılmıştır.
+
+* **Öne Çıkan Parametreler:**
+  * `bootmenupolicy`: `Standard` (Modern grafiksel Metro menüsünü etkinleştirir; tasarım gereği F8 tuş yakalamasını kapatır).
+  * `graphicsresolution`: `1024x768` ve `highestmode`: `No` (`{bootmgr}`, `{default}` ve Windows 11 girdilerinin tamamında 2K/4K ekranlarda yazıların okunaklı büyüklükte kalmasını sağlar).
+  * `displaymessage`: `Recovery`, `recoveryenabled`: `Yes`, `flightsigning`: `Yes`, `nocrashautoreboot`: `Yes`.
+
+### C. Harf Bağımsız Hedef Windows 11 Girdisi (`locate`)
+Harici USB/Ventoy ortamları önyükleme sırasında kendi sürücülerine `C:` harfini atayabildiği için sabit sürücü harfi (`partition=C:`) yerine otomatik bölüm bulma (`locate`) kullanılmıştır:
+
+```cmd
+bcdedit /store "C:\Boot\BCD" /set {6e93deb7-4b32-41d7-8b3c-f1027d9d26fa} device locate=\Windows\system32\winload.efi
+bcdedit /store "C:\Boot\BCD" /set {6e93deb7-4b32-41d7-8b3c-f1027d9d26fa} osdevice locate=\Windows
+```
+* **Avantajı:** Sürücü harfi atanmamış olsa veya Ventoy USB `C:` harfini işgal etse bile önyükleyici diskteki gerçek Windows 11 bölümünü otomatik bulup başlatır.
+* **Evrensellik Kuralı:** Başka bilgisayarlarda sorun çıkarmaması için `numproc` (çekirdek sayısı sınırı) ve eski makineye ait `resumeobject` (hazırda bekletme nesnesi) bu depodan temizlenmiştir.
+
+---
+
+## 2. Doğrulanmış `bcdedit` ve Sistem Komutları
+
+> **Güvenlik Uyarısı:** Komutları uygulamadan önce mutlaka hedef BCD deposunun yedeğini alın ve `/enum all /v` ile doğru GUID üzerinde çalıştığınızı doğrulayın.
+
+### BCD Görüntüleme ve Yedekleme
+```cmd
+:: Depodaki tüm girdileri ve gerçek GUID değerlerini listele
+bcdedit /store "C:\Boot\BCD" /enum all /v
+
+:: İşlem öncesi BCD yedeği al
+bcdedit /store "C:\Boot\BCD" /export "C:\Boot\BCD.backup"
+```
+
+### Kurtarma ve Metro Profili Yapılandırma Komutları
+```cmd
+:: 0x250000c2 (BootUxDisplayMessage = Recovery) öğesinin saf bcdedit karşılığı
+bcdedit /store "C:\Boot\BCD" /set {default} displaymessage Recovery
+
+:: RecoveryOs = True bayrağı ve uçuş/çökme korumaları
+bcdedit /store "C:\Boot\BCD" /set {default} custom:46000010 yes
+bcdedit /store "C:\Boot\BCD" /set {default} recoveryenabled yes
+bcdedit /store "C:\Boot\BCD" /set {default} flightsigning yes
+bcdedit /store "C:\Boot\BCD" /set {default} nocrashautoreboot yes
+
+:: Çözünürlük ve Metro/Eski menü politikası ayarları
+bcdedit /store "C:\Boot\BCD" /set {bootmgr} graphicsresolution 1024x768
+bcdedit /store "C:\Boot\BCD" /set {bootmgr} highestmode no
+bcdedit /store "C:\Boot\BCD" /set {default} bootmenupolicy Standard
+
+:: Evrensel uyumluluk için donanıma özel eski resumeobject kaydını temizleme
+bcdedit /store "C:\Boot\BCD" /deletevalue {6e93deb7-4b32-41d7-8b3c-f1027d9d26fa} resumeobject
+```
+
+### EFI Sistem Bölümünü (`S:`) Bağlama ve Onarma
+```cmd
+:: EFI bölümünü S: sürücüsüne bağla ve içeriğini kontrol et
+mountvol S: /s
+bcdedit /store S:\EFI\Microsoft\Boot\BCD /enum all /v
+
+:: Önyükleme dosyaları bozulduysa NVRAM ve EFI üzerine yeniden yaz (DiskPart ile harfleri doğrulayın)
+bcdboot C:\Windows /s S: /f UEFI
+
+:: İşlem bitince S: sürücü harfini kaldır
+mountvol S: /d
+```
+
+### Kayıt Defteri Yedekleme ve Çevrimdışı İşlemler
+```cmd
+:: Küçük ayar değişiklikleri için alt anahtar yedeği alma ve geri yükleme
+reg export "HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot" C:\SafeBoot_Yedek.reg /y
+reg import C:\SafeBoot_Yedek.reg
+
+:: Tam kovan yedeği alma (Geri yükleme YALNIZCA çevrimdışı WinPE/Kurtarma ortamında yapılmalıdır)
+mkdir C:\RegYedek
+reg save HKLM\SYSTEM C:\RegYedek\SYSTEM.hiv /y
+reg save HKLM\SOFTWARE C:\RegYedek\SOFTWARE.hiv /y
+```
+
+---
+
+## 3. Gerçek Donanım Testlerinden Elde Edilen Kritik Saha Bulguları
+
+### 1. Harici ISO Üzerinden Güvenli Mod ve `INACCESSIBLE_BOOT_DEVICE`
+* **Tespit:** Bilgisayarlar kendi dahili önyükleyicilerinden (`S:\EFI\Microsoft\Boot\BCD`) Güvenli Mod'a sorunsuz geçerken, harici kurtarma ISO'su üzerinden `locate` + `isolatedcontext Yes` ile Güvenli Mod başlatıldığında `INACCESSIBLE_BOOT_DEVICE` hatası verir.
+* **Kök Neden:** Harici ISO'daki `winload.efi`, Güvenli Mod başlatırken çekirdeğe önyükleme aygıtı olarak geldiği harici medyayı (Ventoy/ISO sanal diskini) iletir; Güvenli Mod'da sanal ISO sürücüsü yüklenmediği için çekirdek diske erişemez.
+* **Kesin Çözüm:** Harici kurtarma ortamındaki CMD üzerinden hedef diskin kendi EFI BCD deposuna `safeboot minimal` yazıp sistemi kendi dahili diskinden yeniden başlatın:
+  ```cmd
+  mountvol S: /s
+  bcdedit /store S:\EFI\Microsoft\Boot\BCD /set {default} safeboot minimal
+  ```
+  *(Normal açılışa dönmek için: `bcdedit /deletevalue {current} safeboot`)*
+
+### 2. Güvenli Mod'da Eski SHA-1 İmzalı Sürücü Kurulumu (Siyah Ekran Kuralı)
+* **Tespit:** Windows 11 26H1 yapısında eski SHA-1 imzalı sürücüler (örneğin Intel HD Graphics 4600) Güvenli Mod'da *"Yine de bu sürücü yazılımını yükle"* seçeneğiyle kurulsa bile, doğrudan normal moda geçildiğinde imza zorlaması nedeniyle siyah ekranda kalabilir.
+* **Altın Kural:** Güvenli Mod'da bu şekilde sürücü kurulduktan sonra normal masaüstüne geçmeden önce mutlaka **Gelişmiş Başlangıç Seçenekleri > Başlangıç Ayarları > `7` (Sürücü imzası zorlamasını devre dışı bırak)** seçeneğiyle bir kez açılış yapılmalıdır.
+
+### 3. Harici Önyüklemede Windows Hello PIN ve TPM Davranışı
+* Harici bir USB/ISO üzerinden Windows başlatıldığında önyükleme zinciri (TPM PCR ölçümleri) değiştiği için sistem *"PIN'inizde sorun var"* uyarısı verebilir.
+* Bu durum veri kaybı değildir; kullanıcı **Microsoft/Yerel hesap parolası** ile oturum açıp verilerini yedekleyebilir ve cihazı kendi dahili diskinden başlattığında Windows Hello PIN normale döner. *(BitLocker etkin cihazlarda kurtarma anahtarı hazır bulundurulmalıdır.)*
+
+### 4. Çekirdek Yalıtımı (HVCI) ve Donanım İzleme Araçları
+* Windows 11 26H1'de **Bellek Bütünlüğü (HVCI)** ve **Güvenlik Açığı Olan Sürücü Engelleme Listesi** aktifken donanım erişimli araçlar (örneğin ThrottleStop) sürücü hatası verebilir; test ortamlarında ilgili kayıt defteri anahtarları (`HypervisorEnforcedCodeIntegrity\Enabled=0` ve `VulnerableDriverBlocklistEnable=0`) kapatılıp yeniden başlatılarak aşılabilir.
