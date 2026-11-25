@@ -1,6 +1,6 @@
 # Windows 11 26H1 ve Önceki Sürümler için .NET 3.5, Secure Boot ve Kurtarma Notları
 
-> 📂 **Tüm ikili BCD dosyalarını, Ventoy şablonlarını ve kaynak belgeleri indirmek için:** [GitHub Deposunu Açın (burakdibirdik/windows-11-26h1-dotnet35-guide)](https://github.com)
+> 📂 **Tüm ikili BCD dosyalarını, Ventoy şablonlarını ve kaynak belgeleri indirmek için:** [GitHub Deposunu Açın (burakdibirdik/windows-11-26h1-dotnet35-guide)](https://github.com/burakdibirdik/windows-11-26h1-dotnet35-guide)
 
 
 Windows 11 26H1 ve önceki sürümler için `.NET Framework 3.5`, Secure Boot/UEFI CA 2023, BCD ve WinRE kurtarma profilleri, `bcdedit` kullanımı ve Ventoy otomasyonu hakkında Türkçe teknik notlar ve saha belgeleri.
